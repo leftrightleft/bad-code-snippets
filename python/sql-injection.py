@@ -1,8 +1,21 @@
-from flask import request, render_template, make_response
-
-from server.webapp import flaskapp, cursor
+import psycopg2
+from flask import Flask, request, render_template
 from server.models import Book
 
+# Initialize Flask app
+flaskapp = Flask(__name__)
+
+# Database connection parameters
+conn_params = {
+    'dbname': 'your_dbname',
+    'user': 'your_username',
+    'password': 'your_password',
+    'host': 'localhost'
+}
+
+# Establish a database connection
+conn = psycopg2.connect(**conn_params)
+cursor = conn.cursor()
 
 @flaskapp.route('/')
 def index():
@@ -27,3 +40,7 @@ def index():
         books = [Book(*row) for row in cursor]
 
     return render_template('books.html', books=books)
+
+
+if __name__ == '__main__':
+    flaskapp.run(debug=True)
